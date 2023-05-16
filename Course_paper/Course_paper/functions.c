@@ -9,7 +9,6 @@ char colors[][5] = {
     "0;35", /* Purple */ "1;35",                   /* Bold Purple */
     "0;36", /* Cyan */ "1;36"                      /*Bold Cyan */
 };
-
 //в двумерном массиве transition_cells[Q][V] - первая ячейка соответсвует текущему состоянию автомата, вторая - символу из источника. Их пересечение в талице дает результат следующего состояния автомата.
 
 int matches(char *sourse, int transition_cells[256][256], const size_t len_sample) { //поиск совпадений с шаблоном (return 0/-1)
@@ -68,6 +67,39 @@ void recursion_search(char *path, int transition_cells[256][256], size_t len_sam
         }
         closedir(dir);
         free(dynamic_path);
+    } else {
+        closedir(dir);
+        printf("Директория указана неверно, проверьте поданую строку\n");
+        return;
+    }
+}
+
+void no_recursion_search(char *path, int transition_cells[256][256], size_t len_sample, int *match_counter) {
+    DIR *dir;
+    struct dirent *stream;
+
+    if ((dir = opendir(path)) != NULL) {
+        while ((stream = readdir(dir)) != NULL) {
+            char *file_name = (char *)calloc(256, sizeof(char)); //ЗАКРЫТЬ!
+            strcpy(file_name, stream->d_name);
+            int start_index = matches(file_name, transition_cells, len_sample);
+
+            if (start_index >= 0) {
+                printf("%s %sm %20s %s0m - ", CSI, colors[10], file_name, CSI);
+                *match_counter += 1;
+            } else {
+                printf("%20s - ", file_name);
+            }
+
+            if (stream->d_type == DT_REG) {
+                printf("Файл\n");
+            } else {
+                printf("Папка\n");
+            }
+
+            free(file_name);
+        }
+        closedir(dir);
     } else {
         closedir(dir);
         printf("Директория указана неверно, проверьте поданую строку\n");
