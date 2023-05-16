@@ -17,40 +17,60 @@ int matches(char *sourse, int transition_cells[256][256], const size_t len_sampl
     size_t current_state = 0; //Состояния аавтоматов по A<V,Q,q,F,o>
     size_t final_state = 0;   //Текущее и финальное состояние
 
-    for (size_t i = 0; i < len_sourse; i++) {
+    for (size_t i = 0; i <= len_sourse; i++) { //ТЕСТ ТЕСТ ТЕСТ <=  / <
         char symbol = sourse[i];
         final_state = transition_cells[current_state][(int)symbol]; //?
         current_state = transition_cells[current_state][(int)symbol];
-        
-        if (final_state == len_sample)
+
+        if (final_state == len_sample) {
             return(i - len_sample + 2); //поиск начинается с i - len_sample + 1
-        
+        }
     }
+
     return -1;
 }
 
 // рекурсивный и нерекурсивный поиск - зависит от ключа -r в inputTerm. (ТЗ)
 
-void recursion_search(char* path, int transition_cells[256][256], size_t len_sample, int* match_counter) {
-    
-    char* dynamic_path = (char*) calloc(256, sizeof(char)); //dynamic_path является направлением копирования при выполнении условий.
-    DIR* dir;
+void recursion_search(char *path, int transition_cells[256][256], size_t len_sample, int *match_counter) {
+    char *dynamic_path = (char *)calloc(256, sizeof(char)); //dynamic_path - массив куда записывается путь для поиска в нижних каталогах (путем склееивания (или как сказал бы дезоморфиновый наркоман писавший ТЗ - конкатенации)) если таковые существуют.
+    DIR *dir;
     struct dirent *stream;
+
     if ((dir = opendir(path)) != NULL) {
-        while((stream = readdir(dir)) != NULL) {
-            char* file_name = (char*)calloc(256, sizeof(char)); //ЗАКРЫТЬ!
+        while ((stream = readdir(dir)) != NULL) {
+            char *file_name = (char *)calloc(256, sizeof(char)); //ЗАКРЫТЬ!
             strcpy(file_name, stream->d_name);
             int start_index = matches(file_name, transition_cells, len_sample);
-            if(start_index >= 0) { // if matches function back non-negatice result;
-                printf("%s  %sm %s% s0m - ", CSI, colors[10], fileName, CSI);
+
+            if (start_index >= 0) { // if matches function back non-negatice result;
+                printf("%s %sm %s %s0m - ", CSI, colors[10], file_name, CSI);
                 *match_counter += 1;
-                
+            } else {
+                printf("%20s - \n", file_name);
             }
-            
-            
+
+            //проверка типа данных
+            if (stream->d_type == DT_REG) {
+                printf("Файл\n");
+            } else {
+                if ((stream->d_type == DT_DIR) && ((strcmp(file_name, ".") || strcmp(file_name, "..")) != 0)) {
+                    printf("Папка\n");
+                    strcpy(dynamic_path, path);
+                    dynamic_path = strcat(dynamic_path, "/"); dynamic_path = strcat(dynamic_path, file_name);
+                    recursion_search(dynamic_path, transition_cells, len_sample, match_counter);
+                } else {
+                    printf("Неизвестный тип данных\n");
+                }
+            }
+
+            free(file_name);
         }
-    
-    
+        closedir(dir);
+        free(dynamic_path);
+    } else {
+        closedir(dir);
+        printf("Директория указана неверно, проверьте поданую строку\n");
+        return;
+    }
 }
-
-
