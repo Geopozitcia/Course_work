@@ -1,4 +1,4 @@
-#include "func.h"
+#include "functions.h"
 #define MAX_ABC 256
 #define ASCII_SIZE 255
 #include <stdbool.h>
@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
 
   if ((strcmp(argv[1], "-r") == 0) && argc == 4) {
     printf("Поиск в подкаталогах '%s%sm%s%s0m' в %s%sm%s%s0m\n", CSI,
-           colors[2], argv[2], CSI, CSI, colors[10], argv[3], CSI);
+           colors[10], argv[2], CSI, CSI, colors[10], argv[3], CSI);
     recursion = true;
   } else {
     if ((argc == 3) && ((strcmp(argv[1], "-r") != 0))) {

@@ -1,21 +1,30 @@
-.PHONY: all clean 
-CFLAGS = -Wall -Wextra
-CPPFLAGS = -MMD
-
-bin/fsmatcher: obj/fsmatcher.o obj/functions.o
-	gcc $(CFLAGS) -g -o $@ $^
+CC = gcc
+CFLAGS = -Wall -Wextra -pedantic -std=c99
 
 
-obj/functions.o: src/functions.c
-	gcc -c $(CFLAGS) $(CPPFLAGS) -I src/ -o $@ src/functions.c
+SRCDIR = src
+OBJDIR = obj
+BINDIR = bin
 
-obj/fsmatcher.o: src/fsmatcher.c
-	gcc -c $(CFLAGS) $(CPPFLAGS) -I src/ -o $@ src/fsmatcher.c
+TARGET = fsmatcher
 
-run/fsmatcher:
-	./bin/fsmatcher
+SRCS = $(wildcard $(SRCDIR)/*.c)
+OBJS = $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SRCS))
 
+.PHONY: all clean
+
+all: $(BINDIR)/$(TARGET)
+
+$(BINDIR)/$(TARGET): $(OBJS)
+	$(CC) $(LDFLAGS) $^ -o $@
+
+$(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJDIR):
+	mkdir -p $@
 
 clean:
-	rm obj/*/*.[od]
+	rm -f bin/* obj/*
+
 

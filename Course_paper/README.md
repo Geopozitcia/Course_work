@@ -8,10 +8,10 @@
 ### 
 ./bin/fsmatcher ваш_шаблон ~/ваша_директория(''pwd)
 
-для рекурсивного поиска воспользуйтесь ключом "- r"
+для рекурсивного поиска воспользуйтесь ключом "-r"
 
-.bin/fsmatcher - r ваш_шаблон ~/ваша_директория(''pwd)
+.bin/fsmatcher -r ваш_шаблон ~/ваша_директория(''pwd)
 
 ###
 Пример:
-./bin/fsmatcher sample ~/Desktop/Институт/Курсовая\ программирование/Course_paper/testing_app
+./bin/fsmatcher dog ~/Desktop/Институт/Курсовая\ программирование/Course_paper/testing_app
