@@ -1,4 +1,5 @@
 #include "functions.h"
+#define ASCII_SIZE 255
 
 char colors[][5] = {
     "0;30", /* Blacstate*/ "1;30",                 /* DarstateGray */
@@ -32,6 +33,7 @@ int matches(char *sourse, int transition_cells[256][256], const size_t len_sampl
 // рекурсивный и нерекурсивный поиск - зависит от ключа -r в inputTerm. (ТЗ)
 
 void recursion_search(char *path, int transition_cells[256][256], size_t len_sample, int *match_counter) {
+    
     char *dynamic_path = (char *)calloc(256, sizeof(char)); //dynamic_path - массив куда записывается путь для поиска в нижних каталогах (путем склееивания (или как сказал бы дезоморфиновый наркоман писавший ТЗ - конкатенации)) если таковые существуют.
     DIR *dir;
     struct dirent *stream;
@@ -106,3 +108,47 @@ void no_recursion_search(char *path, int transition_cells[256][256], size_t len_
         return;
     }
 }
+
+void print_table(const char* sample, int transition_cells[256][256], const char* facecontrol) {
+    
+    size_t len_sample = strlen(sample);
+    size_t i, j; // i - проходит по длине образца, j - проходит по алфавиту V in func.
+    for(i = 0; i <= len_sample; i++) {
+        for(j = 0; j <= ASCII_SIZE; j++) {
+            if(facecontrol[j]) {
+                size_t current_state = 0;
+                if(len_sample >= 1 + i)
+                    current_state = i + 1;
+                else
+                    current_state = len_sample;
+                while(current_state > 0) {
+                    current_state = current_state - 1;
+                    char symbol = sample[current_state];
+                    if((current_state > 0) && ((size_t)symbol == j)) {
+                        size_t suffix = current_state; size_t prefix = i;
+                        while((suffix > 0) && (sample[suffix] == sample[prefix])) {
+                            suffix = suffix - 1;
+                            prefix = prefix - 1;
+                        }
+                        if(suffix == 0) {
+                            current_state++;
+                            break;
+                        }
+                    }
+                }
+                transition_cells[i][j] = current_state; //да знаю я
+            }
+        }
+    }
+    
+    return;
+}
+
+/*
+ ________
+|__|__|__|
+|__|__|__|
+|__|__|__|
+ */
+
+
