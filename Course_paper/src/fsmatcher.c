@@ -111,7 +111,7 @@ int main(int argc, char **argv)
   }
   if (match_counter == 0)
   {
-    printf("Нет совпадений с '%s%sm%s%s0m' в коталоге\n", CSI, colors[10], sample,
+    printf("Нет совпадений с '%s%sm%s%s0m' в каталоге\n", CSI, colors[10], sample,
            CSI);
   }
   else

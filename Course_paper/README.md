@@ -14,4 +14,4 @@
 
 ###
 Пример:
-./bin/fsmatcher sample ~/Desktop/Институт/Курсовая программирование/Course_paper/testing_app
+./bin/fsmatcher sample ~/Desktop/Институт/Курсовая\ программирование/Course_paper/testing_app

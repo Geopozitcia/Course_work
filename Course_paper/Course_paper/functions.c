@@ -12,7 +12,7 @@ char colors[][5] = {
 };
 //в двумерном массиве transition_cells[Q][V] - первая ячейка соответсвует текущему состоянию автомата, вторая - символу из источника. Их пересечение в талице дает результат следующего состояния автомата.
 
-int matches(char *sourse, int transition_cells[256][256], const size_t len_sample) { //поиск совпадений с шаблоном (return 0/-1)
+int matches(const char *sourse, int transition_cells[256][256], const size_t len_sample) { //поиск совпадений с шаблоном (return 0/-1)
     size_t len_sourse = strlen(sourse);
     size_t current_state = 0; //Состояния аавтоматов по A<V,Q,q,F,o>
     size_t final_state = 0;   //Текущее и финальное состояние
