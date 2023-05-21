@@ -1,5 +1,3 @@
-// запуск программы:
-// чтобы открыть терминал из Xcode cmd+shift+t
 
 #include "functions.h"
 #include <stdbool.h>
@@ -124,4 +122,5 @@ int main(int argc, char **argv)
   free(dir1);
   return 0;
 }
+
 

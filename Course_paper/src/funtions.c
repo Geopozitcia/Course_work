@@ -1,3 +1,4 @@
+#define MAX_ABC 256
 #include "functions.h"
 #define ASCII_SIZE 255
 
@@ -12,7 +13,7 @@ char colors[][5] = {
 };
 //в двумерном массиве transition_cells[Q][V] - первая ячейка соответсвует текущему состоянию автомата, вторая - символу из источника. Их пересечение в талице дает результат следующего состояния автомата.
 
-int matches(char *sourse, int transition_cells[256][256], const size_t len_sample) { //поиск совпадений с шаблоном (return 0/-1)
+int matches(char *sourse, int transition_cells[MAX_ABC][MAX_ABC], const size_t len_sample) { //поиск совпадений с шаблоном (return 0/-1)
     size_t len_sourse = strlen(sourse);
     size_t current_state = 0; //Состояния аавтоматов по A<V,Q,q,F,o>
     size_t final_state = 0;   //Текущее и финальное состояние
@@ -32,15 +33,15 @@ int matches(char *sourse, int transition_cells[256][256], const size_t len_sampl
 
 // рекурсивный и нерекурсивный поиск - зависит от ключа -r в inputTerm. (ТЗ)
 
-void recursion_search(char *path, int transition_cells[256][256], size_t len_sample, int *match_counter) {
+void recursion_search(char *path, int transition_cells[MAX_ABC][MAX_ABC], size_t len_sample, int *match_counter) {
     
-    char *dynamic_path = (char *)calloc(256, sizeof(char)); //dynamic_path - массив куда записывается путь для поиска в нижних каталогах (путем склееивания (или как сказал бы дезоморфиновый наркоман писавший ТЗ - конкатенации)) если таковые существуют.
+    char *dynamic_path = (char *)calloc(MAX_ABC, sizeof(char)); //dynamic_path - массив куда записывается путь для поиска в нижних каталогах (путем склееивания (или как сказал бы дезоморфиновый наркоман писавший ТЗ - конкатенации)) если таковые существуют.
     DIR *dir;
     struct dirent *stream;
 
     if ((dir = opendir(path)) != NULL) {
         while ((stream = readdir(dir)) != NULL) {
-            char *file_name = (char *)calloc(256, sizeof(char)); //ЗАКРЫТЬ!
+            char *file_name = (char *)calloc(MAX_ABC, sizeof(char)); //ЗАКРЫТЬ!
             strcpy(file_name, stream->d_name);
             int start_index = matches(file_name, transition_cells, len_sample);
 
@@ -76,13 +77,13 @@ void recursion_search(char *path, int transition_cells[256][256], size_t len_sam
     }
 }
 
-void no_recursion_search(char *path, int transition_cells[256][256], size_t len_sample, int *match_counter) {
+void no_recursion_search(char *path, int transition_cells[MAX_ABC][MAX_ABC], size_t len_sample, int *match_counter) {
     DIR *dir;
     struct dirent *stream;
 
     if ((dir = opendir(path)) != NULL) {
         while ((stream = readdir(dir)) != NULL) {
-            char *file_name = (char *)calloc(256, sizeof(char)); //ЗАКРЫТЬ!
+            char *file_name = (char *)calloc(MAX_ABC, sizeof(char)); //ЗАКРЫТЬ!
             strcpy(file_name, stream->d_name);
             int start_index = matches(file_name, transition_cells, len_sample);
 
@@ -109,7 +110,7 @@ void no_recursion_search(char *path, int transition_cells[256][256], size_t len_
     }
 }
 
-void table_logic(const char* sample, int transition_cells[256][256], const char* facecontrol) {
+void table_logic(const char* sample, int transition_cells[MAX_ABC][MAX_ABC], const char* facecontrol) {
     
     size_t len_sample = strlen(sample);
     size_t i, j; // i - проходит по длине образца, j - проходит по алфавиту V in func.
@@ -157,7 +158,7 @@ void fill_line(const size_t n) // устанавливает разделите�
     printf("─");
 }
 
-void print_table(int transition_cells[256][256], const size_t len_sample, const char *facecontrol) {
+void print_table(int transition_cells[MAX_ABC][MAX_ABC], const size_t len_sample, const char *facecontrol) {
   printf("Таблица переходов::\n");
   size_t quantity = len_sample;
   size_t i, j, digits = 0;
@@ -175,7 +176,7 @@ void print_table(int transition_cells[256][256], const size_t len_sample, const 
   for (i = 0; i <= len_sample + digits; i++)
     printf("│ %ld", i); //вывод колличества символов в верхнюю строку
   printf("│\n");
-  for (i = 1; i <= 255; i++) {
+  for (i = 1; i <= ASCII_SIZE; i++) {
     if (facecontrol[i]) {
       printf("|-");
       for (j = 0; j <= len_sample; j++) {
@@ -199,3 +200,4 @@ void print_table(int transition_cells[256][256], const size_t len_sample, const 
   printf("_|\n");
   printf("\n");
 }
+
