@@ -24,7 +24,7 @@ int matches(char *sourse, int transition_cells[256][256], const size_t len_sampl
 
         if (final_state == len_sample) {
             return(i - len_sample + 2); //поиск начинается с i - len_sample + 1
-        }
+        } //да знаю я
     }
 
     return -1;
@@ -109,18 +109,18 @@ void no_recursion_search(char *path, int transition_cells[256][256], size_t len_
     }
 }
 
-void print_table(const char* sample, int transition_cells[256][256], const char* facecontrol) {
+void table_logic(const char* sample, int transition_cells[256][256], const char* facecontrol) {
     
     size_t len_sample = strlen(sample);
     size_t i, j; // i - проходит по длине образца, j - проходит по алфавиту V in func.
-    for(i = 0; i <= len_sample; i++) {
+    for(i = 0; i <= len_sample; i++) { //0 индекс не имеет префикса
         for(j = 0; j <= ASCII_SIZE; j++) {
             if(facecontrol[j]) {
                 size_t current_state = 0;
-                if(len_sample >= 1 + i)
+                if(len_sample >= 1 + i) // условие устанавливает начальное состояние автомата.
                     current_state = i + 1;
                 else
-                    current_state = len_sample;
+                    current_state = len_sample; //что бы не выйти за пределы sample
                 while(current_state > 0) {
                     current_state = current_state - 1;
                     char symbol = sample[current_state];
@@ -143,7 +143,6 @@ void print_table(const char* sample, int transition_cells[256][256], const char*
     
     return;
 }
-
 /*
  ________
 |__|__|__|
@@ -151,4 +150,52 @@ void print_table(const char* sample, int transition_cells[256][256], const char*
 |__|__|__|
  */
 
+// Графическое отображение таблицы
+void fill_line(const size_t n) // устанавливает разделители
+{
+  for (int i = 0; i <= n; i++)
+    printf("─");
+}
 
+void printTable(int transition_cells[256][256], const size_t len_sample, const char *facecontrol) {
+  printf("Таблица переходов::\n");
+  size_t quantity = len_sample;
+  size_t i, j, digits = 0;
+  while (quantity > 0)
+    quantity = quantity / 10; //понижение разрядности для вывода количесва символов образца
+  
+  printf("г");
+  printf("─");
+  for (j = 0; j <= len_sample; j++) {
+    printf("т");
+    fill_line(digits + 1);
+  }
+  printf("‾|\n");
+  printf("│ ");
+  for (i = 0; i <= len_sample + digits; i++)
+    printf("│ %ld", i); //вывод колличества символов в верхнюю строку
+  printf("│\n");
+  for (i = 1; i <= 255; i++) {
+    if (facecontrol[i]) {
+      printf("|-");
+      for (j = 0; j <= len_sample; j++) {
+        printf("+");
+        fill_line(digits + 1);
+      }
+      printf("-|\n");
+      char c = i;
+      printf("│%c", c); //вывод символов в правый столбец
+      for (j = 0; j <= len_sample; j++)
+        printf("│ %d", transition_cells[j][i]);
+      printf("│\n");
+    }
+  }
+  printf("L");
+  printf("─");
+  for (j = 0; j <= len_sample; j++) {
+    printf("l");
+    fill_line(digits + 1);
+  }
+  printf("_|\n");
+  printf("\n");
+}
