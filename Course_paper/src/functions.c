@@ -24,12 +24,18 @@ int matches(const char *sourse, int transition_cells[MAX_ABC][MAX_ABC], const si
     final_state = transition_cells[current_state][(int)symbol];
     current_state = transition_cells[current_state][(int)symbol];
     if (final_state == len_sample)
-      return (i - len_sample + 2); // поиск начинается с i - len_sample + 1
+      return (i - len_sample + 1); // поиск начинается с i - len_sample + 1
   }
   return -1;
 }
 
 // рекурсивный и нерекурсивный поиск - зависит от ключа -r в inputTerm. (ТЗ)
+
+/*`DIR` - это структура, используемая для представления открытого каталога. Она объявляется с помощью `DIR *dir`.
+ 
+ - `struct dirent` - это структура, содержащая информацию о каждом файле в каталоге. Она объявляется с помощью `struct dirent *stream`.
+*/
+
 void recursion_search(char *path, int transition_cells[MAX_ABC][MAX_ABC], const size_t len_sample, int *match_counter)
 {
   char *dynamic_path = (char *)calloc(sizeof(char), MAX_ABC);
@@ -46,11 +52,11 @@ void recursion_search(char *path, int transition_cells[MAX_ABC][MAX_ABC], const 
       int start_index = matches(file_name, transition_cells, len_sample);
       if (start_index >= 0)
       { // if matches function back non-negatice result;
-        printf("%s%sm%20s%s0m - ", CSI, colors[10], file_name, CSI);
+        printf("%s%sm%s%s0m - ", CSI, colors[10], file_name, CSI);
         *match_counter += 1;
       }
       else
-        printf("%20s - ", file_name);
+        printf("%s - ", file_name);
       if (stream->d_type == DT_REG)
       { // проверка типа данных
         printf("Файл\n");
@@ -96,11 +102,11 @@ void no_recursion_search(char *path, int transition_cells[MAX_ABC][MAX_ABC],
       int start_index = matches(file_name, transition_cells, len_sample);
       if (start_index >= 0)
       {
-        printf("%s%sm%20s%s0m - ", CSI, colors[10], file_name, CSI);
+        printf("%s%sm%s%s0m - ", CSI, colors[10], file_name, CSI);
         *match_counter += 1;
       }
       else
-        printf("%20s - ", file_name);
+        printf("%s - ", file_name);
       if (stream->d_type == DT_REG)
       {
         printf("Файл\n");
@@ -131,13 +137,13 @@ void table_logic(const char *sample, int transition_cells[MAX_ABC][MAX_ABC],
   {
     for (j = 1; j <= ASCII_SIZE; j++)
     {
-      if (facecontrol[j])
+      if (facecontrol[j] == 1)
       {
         state = 0;
-        if (len_sample >= i + 1) // условие устанавливает начальное состояние автомата.
+        if (len_sample >= i + 1) // условие устанавливает состояние автомата во время чтения ВС по текущей позиции и длине образца.
           state = i + 1;
         else
-          state = len_sample; // что бы не выйти за пределы sample
+          state = len_sample; // что бы не выйти за пределы sample при продолжении чтения строки
         while (state > 0)
         {
           state = state - 1;
@@ -196,9 +202,9 @@ void print_table(int transition_cells[MAX_ABC][MAX_ABC], const size_t len_sample
     fill_line(digits + 1);
   }
   printf("‾|\n");
-  printf("│ ");
+  printf("| ");
   for (i = 0; i <= len_sample + digits; i++)
-    printf("│ %ld", i); // вывод колличества символов в верхнюю строку
+    printf("| %ld", i); // вывод колличества символов в верхнюю строку
   printf("│\n");
   for (i = 1; i <= ASCII_SIZE; i++)
   {
@@ -212,9 +218,9 @@ void print_table(int transition_cells[MAX_ABC][MAX_ABC], const size_t len_sample
       }
       printf("-|\n");
       char c = i;
-      printf("│%c", c); // вывод символов в правый столбец
+      printf("|%c", c); // вывод символов в правый столбец
       for (j = 0; j <= len_sample; j++)
-        printf("│ %d", transition_cells[j][i]);
+        printf("| %d", transition_cells[j][i]);
       printf("│\n");
     }
   }
